@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">JgsWeather</string>
+    <string name="open_wheather_app_id">26d03a8d04e10175ea2046b8152250a7</string>
+    <string name="processing">Processando</string>
+    <string name="searching_current_weather">Buscando clima…</string>
+    <string name="error">Erro</string>
+    <string name="ok">OK</string>
+    <string name="label_min">Min.: %s</string>
+    <string name="label_max">Máx.: %s</string>
+    <string name="label_weather">Clima: %s</string>
+    <string name="city_added">Cidade adicionada!</string>
+    <string name="forecast_updated">Previsão atualizada!</string>
+    <string name="current_weather_updated">Clima atual atualizado!</string>
+    <string name="city_already_exists_in_database">Cidade já existe na base!</string>
+    <string name="label_city">Cidade:</string>
+    <string name="add">Adicionar</string>
+    <string name="label_cities">Cidades:</string>
+    <string name="hint_insert_city">Informe o nome da cidade</string>
+    <string name="city_deleted">Cidade excluída!</string>
+    <string name="query_with_no_result">Consulta sem resultados!</string>
+    <string name="device_not_connected_to_networkd">Smartphone não conectado com a rede!</string>
+    <string name="warning">Alerta</string>
+</resources>

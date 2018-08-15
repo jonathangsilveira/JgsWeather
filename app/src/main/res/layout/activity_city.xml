@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_city"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_constraintWidth_default="percent"
+    android:layout_marginTop="@dimen/activity_margin_vertical"
+    android:layout_marginBottom="@dimen/activity_margin_vertical"
+    android:layout_marginStart="@dimen/activity_margin_horizontal"
+    android:layout_marginLeft="@dimen/activity_margin_horizontal"
+    android:layout_marginEnd="@dimen/activity_margin_horizontal"
+    android:layout_marginRight="@dimen/activity_margin_horizontal"
+    tools:context=".view.CityActivity">
+
+    <TextView
+        android:id="@+id/activity_city_label_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_city"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/activity_city_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/hint_insert_city"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_city_label_name"
+        android:inputType="textCapSentences"
+        android:imeOptions="actionGo"
+        app:layout_constraintWidth_percent="0.8" />
+
+    <Button
+        android:id="@+id/activity_city_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/add"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_city_name" />
+
+    <TextView
+        android:id="@+id/activity_city_label_cities"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_margin_vertical"
+        app:layout_constraintTop_toBottomOf="@id/activity_city_add"
+        android:text="@string/label_cities"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/activity_city_cities"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/activity_city_label_cities"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+    <include
+        android:id="@+id/activity_city_progress"
+        layout="@layout/container_progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+</android.support.constraint.ConstraintLayout>
