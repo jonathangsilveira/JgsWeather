@@ -26,4 +26,4 @@ Obs. Mensagem retornada pela OpenWeather.
 
 3º Tela de previsão para os próximos 5 dias - Nesta tela apenas apresenta a previsão (forecast) da cidade selecionada na tela Previsão dia atual.
 
-Navegação entre as telas funciona através do bocão Back, do dispositivo.
+Navegação entre as telas funciona através do botão Back, do dispositivo.
