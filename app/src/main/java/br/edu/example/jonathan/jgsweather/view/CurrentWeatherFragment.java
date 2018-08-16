@@ -153,7 +153,8 @@ public class CurrentWeatherFragment extends Fragment {
             FragmentActivity activity = getActivity();
             if (activity != null) {
                 FragmentManager fragmentManager = activity.getSupportFragmentManager();
-                Fragment forecast = ForecastFragment.newInstance(weather.getCityId());
+                Fragment forecast =
+                        ForecastFragment.newInstance(weather.getCityId(), weather.getCityName());
                 fragmentManager.beginTransaction()
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .replace(R.id.activity_weather_container, forecast, ForecastFragment.TAG)

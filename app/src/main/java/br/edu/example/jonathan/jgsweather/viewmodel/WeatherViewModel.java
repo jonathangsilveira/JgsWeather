@@ -142,6 +142,7 @@ public class WeatherViewModel extends AppViewModel {
             } else if (!forecasts.isEmpty()) {
                 mForecastAdapter.clear();
                 mForecastAdapter.addAll(forecasts);
+                mMessage.setValue(getString(R.string.forecast_updated));
             }
         }
 
@@ -221,6 +222,7 @@ public class WeatherViewModel extends AppViewModel {
                 Weather first = weathers.get(0);
                 String day = DateUtils.getDay(first.getCurrentDate());
                 mLiveDay.setValue(day);
+                mMessage.setValue(getString(R.string.current_weather_updated));
             }
         }
 

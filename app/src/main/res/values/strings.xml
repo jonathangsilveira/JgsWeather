@@ -20,17 +20,16 @@
     <string name="query_with_no_result">Consulta sem resultados!</string>
     <string name="device_not_connected_to_network">Smartphone não conectado com a rede!</string>
     <string name="warning">Alerta</string>
-    <string name="cities">Cities</string>
+    <string name="cities">Cidades</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="today">Hoje</string>
     <string name="refresh">Atualizar</string>
     <string name="label_current">Atual: %s</string>
     <string name="tomorrow">Amanhã</string>
     <string name="yesterday">Ontem</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="sort_by_name">Ordernar por nome</string>
     <string name="sort_by_min">Ordernar por mínimo</string>
     <string name="sort_by_max">Ordernar por máximo</string>
+    <string name="forecast">Previsão</string>
+    <string name="back">Voltar</string>
 </resources>
