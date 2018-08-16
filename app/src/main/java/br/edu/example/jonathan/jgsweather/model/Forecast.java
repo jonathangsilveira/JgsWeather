@@ -3,8 +3,10 @@ package br.edu.example.jonathan.jgsweather.model;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
+import android.support.annotation.NonNull;
 
 import java.util.Date;
 
@@ -12,12 +14,14 @@ import br.edu.example.jonathan.jgsweather.utils.Converters;
 
 @Entity(tableName = "forecast", foreignKeys =
         @ForeignKey(entity = City.class, parentColumns = "id", childColumns = "city_id",
-                onDelete = ForeignKey.CASCADE))
+                onDelete = ForeignKey.CASCADE),
+        indices = @Index(value = {"uuid"}, unique = true))
 @TypeConverters(Converters.class)
 public class Forecast {
 
     @PrimaryKey
-    private long id;
+    @NonNull
+    private String uuid;
 
     @ColumnInfo(name = "city_id")
     private long cityId;
@@ -42,13 +46,8 @@ public class Forecast {
 
     private String description;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
+    @ColumnInfo(name = "weather_code")
+    private long weatherCode;
 
     public long getCityId() {
         return cityId;
@@ -122,4 +121,20 @@ public class Forecast {
         this.description = description;
     }
 
+    public long getWeatherCode() {
+        return weatherCode;
+    }
+
+    public void setWeatherCode(long weatherCode) {
+        this.weatherCode = weatherCode;
+    }
+
+    @NonNull
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(@NonNull String uuid) {
+        this.uuid = uuid;
+    }
 }

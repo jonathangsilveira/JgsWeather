@@ -2,10 +2,13 @@ package br.edu.example.jonathan.jgsweather.view;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,6 +41,10 @@ public class CityActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_city);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(R.string.cities);
+        }
         initViewModel();
         initReferences();
         initListeners();
@@ -56,9 +63,8 @@ public class CityActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerViewCities.setLayoutManager(linearLayoutManager);
-        int marginHorizontal = (int) getResources().getDimension(R.dimen.activity_margin_vertical);
         DeviderItemDecoration itemDecoration =
-                new DeviderItemDecoration(this, LinearLayoutManager.VERTICAL, marginHorizontal);
+                new DeviderItemDecoration(this, LinearLayoutManager.VERTICAL, 0);
         mRecyclerViewCities.addItemDecoration(itemDecoration);
     }
 
@@ -66,6 +72,10 @@ public class CityActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mRecyclerViewCities.setAdapter(mViewModel.getAdapter());
+    }
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, CityActivity.class);
     }
 
     private void initListeners() {

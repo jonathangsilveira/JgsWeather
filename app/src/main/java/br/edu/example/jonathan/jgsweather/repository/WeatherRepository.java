@@ -13,25 +13,28 @@ import java.net.HttpURLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+import br.edu.example.jonathan.jgsweather.model.Forecast;
 import br.edu.example.jonathan.jgsweather.model.Weather;
 
 public class WeatherRepository extends OpenWeatherRepository {
 
     private static final String COMMA = ",";
 
-    WeatherRepository(Context context) {
+    public WeatherRepository(Context context) {
         super(context);
     }
 
     @NonNull
     public List<Weather> queryByCities(List<Long> citiesId)
             throws BusinessException, IOException, JSONException {
-        String url = "http://samples.openweathermap.org/data/2.5/group?";
+        String url = "http://api.openweathermap.org/data/2.5/group?";
         StringBuilder ids = new StringBuilder();
         for (long id : citiesId) {
             if (ids.length() > 0) {
@@ -42,6 +45,7 @@ public class WeatherRepository extends OpenWeatherRepository {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("id", ids.toString());
         parameters.put("units", "metric");
+        parameters.put("lang", "pt_br");
         return query(url, parameters);
     }
 
@@ -62,8 +66,8 @@ public class WeatherRepository extends OpenWeatherRepository {
     }
 
     @NonNull
-    private List<Weather> queryForecast(String url, Map<String, String> parameters)
-            throws JSONException, BusinessException, IOException, ParseException {
+    private List<Forecast> queryForecast(String url, Map<String, String> parameters)
+            throws JSONException, BusinessException, IOException {
         HttpURLConnection connection = null;
         try {
             connection = connect(url, parameters);
@@ -95,7 +99,6 @@ public class WeatherRepository extends OpenWeatherRepository {
         String elementSys = "sys";
         String elementWeather = "weather";
         String elementMain = "main";
-        String elementDt = "dt";
         String elementId = "id";
         String elementName = "name";
         String elementCountry = "country";
@@ -122,20 +125,21 @@ public class WeatherRepository extends OpenWeatherRepository {
                 double temp = mainObject.getDouble(elementMainTemp);
                 double tempMin = mainObject.getDouble(elementMainTempMin);
                 double tempMax = mainObject.getDouble(elementMainTempMax);
-                long timestamp = itemObject.getLong(elementDt);
                 long cityId = itemObject.getLong(elementId);
                 String cityName = itemObject.getString(elementName);
                 Weather weather = new Weather();
-                weather.setId(weatherId);
+                UUID uuid = UUID.randomUUID();
+                weather.setUuid(uuid.toString());
                 weather.setCityId(cityId);
                 weather.setCityName(cityName);
                 weather.setCountry(country);
                 weather.setTemperature(temp);
                 weather.setTemperatureMin(tempMin);
                 weather.setTemperatureMax(tempMax);
-                weather.setCurrentDate(new Date(timestamp));
+                weather.setCurrentDate(new Date());
                 weather.setMain(weatherMain);
                 weather.setDescription(weatherDescription);
+                weather.setWeatherCode(weatherId);
                 weathers.add(weather);
             }
         }
@@ -143,7 +147,11 @@ public class WeatherRepository extends OpenWeatherRepository {
     }
 
     @NonNull
-    List<Weather> convertJsonToForecast(String json) throws JSONException, BusinessException, ParseException {
+    List<Forecast> convertJsonToForecast(String json)
+            throws JSONException, BusinessException {
+        Date today = new Date();
+        Calendar calenda = Calendar.getInstance();
+        calenda.setTime(today);
         String elementCod = "cod";
         JSONObject jsonObject = new JSONObject(json);
         if (jsonObject.has(elementCod)) {
@@ -170,14 +178,12 @@ public class WeatherRepository extends OpenWeatherRepository {
         String elementMainTemp = "temp";
         String elementMainTempMin = "temp_min";
         String elementMainTempMax = "temp_max";
-        List<Weather> weathers = new ArrayList<>();
+        List<Forecast> forecast = new ArrayList<>();
         int cnt = jsonObject.getInt(elementCnt);
         JSONObject cityObject = jsonObject.getJSONObject(elementCity);
         long cityId = cityObject.getLong(elementCityId);
         String cityName = cityObject.getString(elementCityName);
         String country = cityObject.getString(elementCityCountry);
-        @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         if (cnt > 0) {
             JSONArray listArray = jsonObject.getJSONArray(elementList);
             for (int i = 0; i < cnt; i++) {
@@ -191,32 +197,37 @@ public class WeatherRepository extends OpenWeatherRepository {
                 double temp = mainObject.getDouble(elementMainTemp);
                 double tempMin = mainObject.getDouble(elementMainTempMin);
                 double tempMax = mainObject.getDouble(elementMainTempMax);
-                String dateText = itemObject.getString(elementDtTxt);
-                Weather weather = new Weather();
-                weather.setId(weatherId);
+                int days = i + 1;
+                calenda.add(Calendar.DAY_OF_MONTH, days);
+                Date currentDate = calenda.getTime();
+                Forecast weather = new Forecast();
+                UUID uuid = UUID.randomUUID();
+                weather.setUuid(uuid.toString());
                 weather.setCityId(cityId);
                 weather.setCityName(cityName);
                 weather.setCountry(country);
                 weather.setTemperature(temp);
                 weather.setTemperatureMin(tempMin);
                 weather.setTemperatureMax(tempMax);
-                Date currentDate = dateFormat.parse(dateText);
                 weather.setCurrentDate(currentDate);
                 weather.setMain(weatherMain);
                 weather.setDescription(weatherDescription);
-                weathers.add(weather);
+                weather.setWeatherCode(weatherId);
+                forecast.add(weather);
             }
         }
-        return weathers;
+        return forecast;
     }
 
     @NonNull
-    public List<Weather> queryForecastByCity(long cityId)
-            throws BusinessException, IOException, JSONException, ParseException {
+    public List<Forecast> queryForecastByCity(long cityId)
+            throws BusinessException, IOException, JSONException {
         String url = "http://api.openweathermap.org/data/2.5/forecast?";
         Map<String, String> parameters = new HashMap<>();
         parameters.put("cnt", String.valueOf(5));
         parameters.put("id", String.valueOf(cityId));
+        parameters.put("units", "metric");
+        parameters.put("lang", "pt_br");
         return queryForecast(url, parameters);
     }
 

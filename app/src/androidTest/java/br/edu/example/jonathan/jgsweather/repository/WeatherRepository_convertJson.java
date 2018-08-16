@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.util.List;
 
 import br.edu.example.jonathan.jgsweather.R;
+import br.edu.example.jonathan.jgsweather.model.Forecast;
 import br.edu.example.jonathan.jgsweather.model.Weather;
 
 @RunWith(AndroidJUnit4.class)
@@ -44,7 +45,7 @@ public class WeatherRepository_convertJson {
         int expectedCount = 5;
 
         String json = repository.extractJsonFromStream(inputStream);
-        List<Weather> weathers = repository.convertJsonToForecast(json);
+        List<Forecast> weathers = repository.convertJsonToForecast(json);
 
         Assert.assertEquals(expectedCount, weathers.size());
     }

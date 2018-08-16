@@ -6,7 +6,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 
 import org.json.JSONException;
 
@@ -100,7 +99,7 @@ public class CityViewModel extends AppViewModel {
             if (isError()) {
                 mErrorMessage.setValue(mExceptionMessage);
             } else if (isWarning()) {
-                String message = getString(R.string.device_not_connected_to_networkd);
+                String message = getString(R.string.device_not_connected_to_network);
                 mMessage.setValue(message);
             } else if (city == null) {
                 mMessage.setValue(getString(R.string.city_already_exists_in_database));

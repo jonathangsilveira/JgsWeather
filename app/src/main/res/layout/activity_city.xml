@@ -51,14 +51,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_margin_vertical"
-        app:layout_constraintTop_toBottomOf="@id/activity_city_add"
+        app:layout_constraintTop_toBottomOf="@+id/activity_city_add"
         android:text="@string/label_cities"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/activity_city_cities"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/activity_city_label_cities"
+        app:layout_constraintTop_toBottomOf="@+id/activity_city_label_cities"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 

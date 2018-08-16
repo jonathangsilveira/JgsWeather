@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/action_refresc"
+        android:icon="@drawable/round_refresh_white_36"
+        app:showAsAction="always"
+        android:title="@string/refresh" />
+
+    <item android:id="@+id/action_sort_by_name"
+        app:showAsAction="ifRoom"
+        android:title="@string/sort_by_name" />
+
+    <item android:id="@+id/action_sort_by_min"
+        app:showAsAction="ifRoom"
+        android:title="@string/sort_by_min" />
+
+    <item android:id="@+id/action_sort_by_max"
+        app:showAsAction="ifRoom"
+        android:title="@string/sort_by_max" />
+
+</menu>
