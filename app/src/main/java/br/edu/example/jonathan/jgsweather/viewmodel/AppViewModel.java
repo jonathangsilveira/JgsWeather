@@ -75,4 +75,11 @@ public class AppViewModel extends AndroidViewModel {
         return false;
     }
 
+    @Override
+    protected void onCleared() {
+        if (hasAnyTaskRunning()) {
+            mTask.cancel(true);
+        }
+        super.onCleared();
+    }
 }

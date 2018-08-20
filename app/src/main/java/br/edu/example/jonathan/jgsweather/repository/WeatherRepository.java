@@ -1,6 +1,5 @@
 package br.edu.example.jonathan.jgsweather.repository;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
@@ -10,8 +9,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -197,8 +194,7 @@ public class WeatherRepository extends OpenWeatherRepository {
                 double temp = mainObject.getDouble(elementMainTemp);
                 double tempMin = mainObject.getDouble(elementMainTempMin);
                 double tempMax = mainObject.getDouble(elementMainTempMax);
-                int days = i + 1;
-                calenda.add(Calendar.DAY_OF_MONTH, days);
+                calenda.add(Calendar.DAY_OF_MONTH, 1);
                 Date currentDate = calenda.getTime();
                 Forecast weather = new Forecast();
                 UUID uuid = UUID.randomUUID();
