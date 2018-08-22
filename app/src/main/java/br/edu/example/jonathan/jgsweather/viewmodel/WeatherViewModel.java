@@ -6,7 +6,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -217,13 +216,7 @@ public class WeatherViewModel extends AppViewModel {
     private List<Forecast> queryForecastFromNetwork(Long cityId) throws Exception {
         List<Forecast> currentForecast = mRepository.queryForecastByCity(cityId);
         if (!currentForecast.isEmpty()) {
-            Log.d("WeatherViewModel", String.format("Updating city id: %d", cityId));
-            List<Forecast> result = mForecastDao.queryByCity(cityId);
-            Log.d("WeatherViewModel", String.format("Rows count: %d", result.size()));
-            int rowsAffected = mForecastDao.deleteByCity(cityId);
-            Log.d("WeatherViewModel", String.format("Rows affected: %d", rowsAffected));
-            result = mForecastDao.queryByCity(cityId);
-            Log.d("WeatherViewModel", String.format("Rows count now: %d", result.size()));
+            mForecastDao.deleteByCity(cityId);
             for (Forecast weather : currentForecast) {
                 mForecastDao.insert(weather);
             }
