@@ -1,9 +1,11 @@
 package br.edu.example.jonathan.jgsweather.view;
 
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -18,8 +20,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.List;
+
 import br.edu.example.jonathan.jgsweather.R;
-import br.edu.example.jonathan.jgsweather.components.DeviderItemDecoration;
+import br.edu.example.jonathan.jgsweather.model.Forecast;
 import br.edu.example.jonathan.jgsweather.viewmodel.WeatherViewModel;
 
 /**
@@ -46,6 +50,8 @@ public class ForecastFragment extends Fragment {
     private Button mButtonBack;
 
     private String mCityName;
+
+    private ForecastAdapter mAdapter;
 
     public ForecastFragment() {
         // Required empty public constructor
@@ -87,12 +93,14 @@ public class ForecastFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_forecast, container, false);
-        ForecastAdapter adapter = mViewModel.getForecastAdapter();
         initReferences(layout);
-        mButtonBack.setOnClickListener(new OnBackClicked());
-        mRecyclerViewForecast.setAdapter(adapter);
         setupRecyclerView();
         return layout;
+    }
+
+    private void initListeners() {
+        mViewModel.getForecast(mCityId).observe(this, new ForecastObserver());
+        mButtonBack.setOnClickListener(new OnBackClicked());
     }
 
     private void initReferences(View layout) {
@@ -104,7 +112,7 @@ public class ForecastFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mViewModel.loadForecast(mCityId);
+        initListeners();
         mTextViewCity.setText(mCityName);
     }
 
@@ -127,10 +135,9 @@ public class ForecastFragment extends Fragment {
         if (activity != null) {
             LinearLayoutManager linearLayoutManager =
                     new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
+            mAdapter = new ForecastAdapter();
             mRecyclerViewForecast.setLayoutManager(linearLayoutManager);
-            DeviderItemDecoration itemDecoration =
-                    new DeviderItemDecoration(activity, LinearLayoutManager.VERTICAL, 0);
-            mRecyclerViewForecast.addItemDecoration(itemDecoration);
+            mRecyclerViewForecast.setAdapter(mAdapter);
         }
     }
 
@@ -141,6 +148,19 @@ public class ForecastFragment extends Fragment {
             FragmentActivity activity = getActivity();
             if (activity != null) {
                 activity.onBackPressed();
+            }
+        }
+
+    }
+
+    private class ForecastObserver implements Observer<List<Forecast>> {
+
+        @Override
+        public void onChanged(@Nullable List<Forecast> data) {
+            boolean nonNull = data != null && !data.isEmpty();
+            if (nonNull) {
+                mAdapter.clear();
+                mAdapter.addAll(data);
             }
         }
 

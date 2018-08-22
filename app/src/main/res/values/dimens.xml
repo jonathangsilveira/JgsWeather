@@ -3,4 +3,9 @@
     <dimen name="activity_margin_vertical">16dp</dimen>
     <dimen name="activity_margin_horizontal">10dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="card_corner_radius">4dp</dimen>
+    <dimen name="card_icon_widht">70dp</dimen>
+    <dimen name="card_icon_height">70dp</dimen>
+    <dimen name="item_horizontal_margin">10dp</dimen>
+    <dimen name="item_vertical_margin">10dp</dimen>
 </resources>

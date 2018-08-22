@@ -15,26 +15,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import br.edu.example.jonathan.jgsweather.utils.OpenWeatherUtils;
 import br.edu.example.jonathan.jgsweather.R;
 import br.edu.example.jonathan.jgsweather.model.Forecast;
 import br.edu.example.jonathan.jgsweather.utils.DateUtils;
+import br.edu.example.jonathan.jgsweather.utils.OpenWeatherUtils;
 
 public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastViewHolder> {
 
-    private Context mContext;
-
     private List<Forecast> mForecast = new ArrayList<>();
-
-    public ForecastAdapter(List<Forecast> weathers) {
-        mForecast.addAll(weathers);
-    }
 
     @NonNull
     @Override
     public ForecastViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        mContext = parent.getContext();
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_forecast, parent, false);
+        Context context = parent.getContext();
+        View view = LayoutInflater.from(context).inflate(R.layout.item_card_weather, parent, false);
         return new ForecastViewHolder(view);
     }
 
@@ -42,20 +36,16 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
     public void onBindViewHolder(@NonNull ForecastViewHolder holder, int position) {
         final Forecast weather = mForecast.get(position);
         Date date = weather.getCurrentDate();
-        String dateForecast = DateUtils.getDay(date);
-        holder.textViewDate.setText(dateForecast);
-        holder.textViewCondition.setText(mContext.getString(R.string.label_weather, weather.getDescription()));
+        holder.mTextViewTitle.setText(DateUtils.getDay(date));
+        holder.mTextViewCondition.setText(weather.getDescription());
         DecimalFormat decimal = (DecimalFormat) NumberFormat.getInstance();
         decimal.setMinimumFractionDigits(2);
         decimal.setMaximumFractionDigits(2);
-        holder.textViewMin.setText(mContext.getString(R.string.label_min,
-                decimal.format(weather.getTemperatureMin())));
-        holder.textViewMax.setText(mContext.getString(R.string.label_max,
-                decimal.format(weather.getTemperatureMax())));
-        holder.textViewTemp.setText(mContext.getString(R.string.label_current,
-                decimal.format(weather.getTemperature())));
+        holder.mTextViewTempMin.setText(decimal.format(weather.getTemperatureMin()));
+        holder.mTextViewTempMax.setText(decimal.format(weather.getTemperatureMax()));
+        holder.mTextViewTemp.setText(decimal.format(weather.getTemperature()));
         int iconResource = OpenWeatherUtils.getWeatherIcon(weather.getWeatherCode());
-        holder.imageViewIcon.setImageResource(iconResource);
+        holder.mImageViewIcon.setImageResource(iconResource);
     }
 
     public void addAll(List<Forecast> forecast) {
@@ -76,26 +66,26 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
     class ForecastViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView textViewDate;
+        private TextView mTextViewTitle;
 
-        private TextView textViewCondition;
+        private TextView mTextViewCondition;
 
-        private TextView textViewMin;
+        private TextView mTextViewTempMin;
 
-        private TextView textViewMax;
+        private TextView mTextViewTempMax;
 
-        private ImageView imageViewIcon;
+        private ImageView mImageViewIcon;
 
-        private TextView textViewTemp;
+        private TextView mTextViewTemp;
 
         ForecastViewHolder(View itemView) {
             super(itemView);
-            textViewDate = itemView.findViewById(R.id.item_forecast_date);
-            textViewCondition = itemView.findViewById(R.id.item_forecast_status);
-            textViewMin = itemView.findViewById(R.id.item_forecast_min);
-            textViewMax = itemView.findViewById(R.id.item_forecast_max);
-            imageViewIcon = itemView.findViewById(R.id.item_forecast_image);
-            textViewTemp = itemView.findViewById(R.id.item_forecast_temp);
+            mTextViewTitle = itemView.findViewById(R.id.item_card_weather_title);
+            mTextViewCondition = itemView.findViewById(R.id.item_card_weather_condition);
+            mTextViewTempMin = itemView.findViewById(R.id.item_card_weather_temp_min);
+            mTextViewTempMax = itemView.findViewById(R.id.item_card_weather_temp_max);
+            mImageViewIcon = itemView.findViewById(R.id.item_card_weather_icon);
+            mTextViewTemp = itemView.findViewById(R.id.item_card_weather_temp);
         }
 
     }

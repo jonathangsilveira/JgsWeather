@@ -4,6 +4,7 @@ package br.edu.example.jonathan.jgsweather.view;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -21,8 +22,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.List;
+
 import br.edu.example.jonathan.jgsweather.R;
-import br.edu.example.jonathan.jgsweather.components.DeviderItemDecoration;
 import br.edu.example.jonathan.jgsweather.model.Weather;
 import br.edu.example.jonathan.jgsweather.viewmodel.WeatherViewModel;
 
@@ -41,6 +43,8 @@ public class CurrentWeatherFragment extends Fragment {
 
     private TextView mTextViewTitle;
 
+    private WeatherAdapter mAdapter;
+
     public CurrentWeatherFragment() {
         // Required empty public constructor
     }
@@ -49,24 +53,28 @@ public class CurrentWeatherFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        initViewModel();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_current_weather, container, false);
-        FragmentActivity activity = getActivity();
-        if (activity != null) {
-            mViewModel = ViewModelProviders.of(activity).get(WeatherViewModel.class);
-            mViewModel.getLiveDay().observe(this, new DayObserver());
-        }
         initReferences(layout);
-        initListeners();
         setupRecyclerView();
         return layout;
     }
 
+    private void initViewModel() {
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            mViewModel = ViewModelProviders.of(activity).get(WeatherViewModel.class);
+        }
+    }
+
     private void initListeners() {
+        mViewModel.getCurrentWeather().observe(this, new WeatherObserver());
+        mViewModel.getLiveDay().observe(this, new DayObserver());
         mFab.setOnClickListener(new OnFabClicked());
     }
 
@@ -81,10 +89,9 @@ public class CurrentWeatherFragment extends Fragment {
         if (activity != null) {
             LinearLayoutManager linearLayoutManager =
                     new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
+            mAdapter = new WeatherAdapter(new WeatherAdapterListener());
             mRecyclerViewCities.setLayoutManager(linearLayoutManager);
-            DeviderItemDecoration itemDecoration =
-                    new DeviderItemDecoration(activity, LinearLayoutManager.VERTICAL, 0);
-            mRecyclerViewCities.addItemDecoration(itemDecoration);
+            mRecyclerViewCities.setAdapter(mAdapter);
         }
     }
 
@@ -120,9 +127,7 @@ public class CurrentWeatherFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        WeatherAdapterListener listener = new WeatherAdapterListener();
-        WeatherAdapter adapter = mViewModel.getWeatherAdapter(listener);
-        mRecyclerViewCities.setAdapter(adapter);
+        initListeners();
     }
 
     private class OnFabClicked implements View.OnClickListener {
@@ -160,6 +165,19 @@ public class CurrentWeatherFragment extends Fragment {
                         .replace(R.id.activity_weather_container, forecast, ForecastFragment.TAG)
                         .addToBackStack(TAG)
                         .commit();
+            }
+        }
+
+    }
+
+    private class WeatherObserver implements Observer<List<Weather>> {
+
+        @Override
+        public void onChanged(@Nullable List<Weather> data) {
+            boolean nonNull = data != null && !data.isEmpty();
+            if (nonNull) {
+                mAdapter.clear();
+                mAdapter.addAll(data);
             }
         }
 

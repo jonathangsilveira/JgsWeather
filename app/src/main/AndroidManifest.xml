@@ -15,14 +15,13 @@
         <activity
             android:name=".view.CityActivity"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".view.WeatherActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

@@ -8,6 +8,8 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import br.edu.example.jonathan.jgsweather.R;
@@ -17,8 +19,6 @@ import br.edu.example.jonathan.jgsweather.model.Forecast;
 import br.edu.example.jonathan.jgsweather.model.Weather;
 import br.edu.example.jonathan.jgsweather.repository.WeatherRepository;
 import br.edu.example.jonathan.jgsweather.utils.DateUtils;
-import br.edu.example.jonathan.jgsweather.view.ForecastAdapter;
-import br.edu.example.jonathan.jgsweather.view.WeatherAdapter;
 
 public class WeatherViewModel extends AppViewModel {
 
@@ -32,11 +32,19 @@ public class WeatherViewModel extends AppViewModel {
 
     private ForecastDao mForecastDao;
 
-    private WeatherAdapter mWeatherAdapter;
-
-    private ForecastAdapter mForecastAdapter;
-
     private MutableLiveData<String> mLiveDay;
+
+    private List<Weather> mWeathers = new ArrayList<>();
+
+    private NameComparator mByName;
+
+    private TemperatureMinCompatator mByMin;
+
+    private TemperatureMaxCompatator mByMax;
+
+    private MutableLiveData<List<Weather>> mLiveWeather;
+
+    private MutableLiveData<List<Forecast>> mLiveForecast;
 
     WeatherViewModel(@NonNull Application application) {
         super(application);
@@ -63,11 +71,27 @@ public class WeatherViewModel extends AppViewModel {
         return mLiveDay;
     }
 
+    public LiveData<List<Weather>> getCurrentWeather() {
+        if (mLiveWeather == null) {
+            mLiveWeather = new MutableLiveData<>();
+            refreshWeather();
+        }
+        return mLiveWeather;
+    }
+
+    public LiveData<List<Forecast>> getForecast(long cityId) {
+        if (mLiveForecast == null) {
+            mLiveForecast = new MutableLiveData<>();
+            loadForecast(cityId);
+        }
+        return mLiveForecast;
+    }
+
     public void refreshForecast() {
         runForecast(mCityId);
     }
 
-    public void loadForecast(long cityId) {
+    private void loadForecast(long cityId) {
         if (cityId != mCityId) {
             mCityId = cityId;
             refreshForecast();
@@ -80,21 +104,6 @@ public class WeatherViewModel extends AppViewModel {
         task.execute(cityId);
     }
 
-    public WeatherAdapter getWeatherAdapter(WeatherAdapter.AdapterInteractionListener listener) {
-        if (mWeatherAdapter == null) {
-            mWeatherAdapter = new WeatherAdapter(new ArrayList<Weather>(), listener);
-            refreshWeather();
-        }
-        return mWeatherAdapter;
-    }
-
-    public ForecastAdapter getForecastAdapter() {
-        if (mForecastAdapter == null) {
-            mForecastAdapter = new ForecastAdapter(new ArrayList<Forecast>());
-        }
-        return mForecastAdapter;
-    }
-
     public void refreshWeather() {
         AsyncWeatherTask task = new AsyncWeatherTask();
         setAsyncTask(task);
@@ -102,15 +111,25 @@ public class WeatherViewModel extends AppViewModel {
     }
 
     public void sortByName() {
-        mWeatherAdapter.sortByName();
+        if (mByName == null) {
+            mByName = new NameComparator();
+        }
+        Collections.sort(mWeathers, mByName);
     }
 
     public void sortByMin() {
-        mWeatherAdapter.sortByMin();
+        if (mByMin == null) {
+            mByMin = new TemperatureMinCompatator();
+        }
+        Collections.sort(mWeathers, mByMin);
     }
 
     public void sortByMax() {
-        mWeatherAdapter.sortByMax();
+        if (mByMax == null) {
+            mByMax = new TemperatureMaxCompatator();
+        }
+        Collections.sort(mWeathers, mByMax);
+
     }
 
     @NonNull
@@ -146,9 +165,7 @@ public class WeatherViewModel extends AppViewModel {
             } else if (result.isSuccess()) {
                 if (result.hasData()) {
                     List<Forecast> data = result.getData();
-                    assert data != null;
-                    mForecastAdapter.clear();
-                    mForecastAdapter.addAll(data);
+                    mLiveForecast.setValue(data);
                     if (result.isNetworkSource()) {
                         mMessage.setValue(getString(R.string.forecast_updated));
                     }
@@ -230,8 +247,9 @@ public class WeatherViewModel extends AppViewModel {
                 if (result.hasData()) {
                     assert result.getData() != null;
                     List<Weather> data = result.getData();
-                    mWeatherAdapter.clear();
-                    mWeatherAdapter.addAll(data);
+                    mWeathers.clear();
+                    mWeathers.addAll(data);
+                    mLiveWeather.setValue(mWeathers);
                     Weather first = data.get(0);
                     String day = DateUtils.getDay(first.getCurrentDate());
                     mLiveDay.setValue(day);
@@ -280,6 +298,39 @@ public class WeatherViewModel extends AppViewModel {
                 result.setSourceDatabase();
             }
             return result;
+        }
+
+    }
+
+    private class NameComparator implements Comparator<Weather> {
+
+        @Override
+        public int compare(Weather thisOne, Weather thatOne) {
+            String thisName = thisOne.getCityName();
+            String thatName = thatOne.getCityName();
+            return thisName.compareToIgnoreCase(thatName);
+        }
+
+    }
+
+    private class TemperatureMinCompatator implements Comparator<Weather> {
+
+        @Override
+        public int compare(Weather thisOne, Weather thatOne) {
+            Double thisMin = thisOne.getTemperatureMin();
+            Double thatMin = thatOne.getTemperatureMin();
+            return thisMin.compareTo(thatMin);
+        }
+
+    }
+
+    private class TemperatureMaxCompatator implements Comparator<Weather> {
+
+        @Override
+        public int compare(Weather thisOne, Weather thatOne) {
+            Double thisMax = thisOne.getTemperatureMax();
+            Double thatMax = thatOne.getTemperatureMax();
+            return thatMax.compareTo(thisMax);
         }
 
     }
