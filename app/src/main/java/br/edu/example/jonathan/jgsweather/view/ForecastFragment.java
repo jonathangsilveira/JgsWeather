@@ -99,8 +99,9 @@ public class ForecastFragment extends Fragment {
     }
 
     private void initListeners() {
-        mViewModel.getForecast(mCityId).observe(this, new ForecastObserver());
+        mViewModel.getForecast().observe(this, new ForecastObserver());
         mButtonBack.setOnClickListener(new OnBackClicked());
+        mViewModel.loadForecast(mCityId);
     }
 
     private void initReferences(View layout) {

@@ -6,6 +6,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -79,10 +80,9 @@ public class WeatherViewModel extends AppViewModel {
         return mLiveWeather;
     }
 
-    public LiveData<List<Forecast>> getForecast(long cityId) {
+    public LiveData<List<Forecast>> getForecast() {
         if (mLiveForecast == null) {
             mLiveForecast = new MutableLiveData<>();
-            loadForecast(cityId);
         }
         return mLiveForecast;
     }
@@ -91,7 +91,7 @@ public class WeatherViewModel extends AppViewModel {
         runForecast(mCityId);
     }
 
-    private void loadForecast(long cityId) {
+    public void loadForecast(long cityId) {
         if (cityId != mCityId) {
             mCityId = cityId;
             refreshForecast();
@@ -217,7 +217,13 @@ public class WeatherViewModel extends AppViewModel {
     private List<Forecast> queryForecastFromNetwork(Long cityId) throws Exception {
         List<Forecast> currentForecast = mRepository.queryForecastByCity(cityId);
         if (!currentForecast.isEmpty()) {
-            mForecastDao.deleteByCity(cityId);
+            Log.d("WeatherViewModel", String.format("Updating city id: %d", cityId));
+            List<Forecast> result = mForecastDao.queryByCity(cityId);
+            Log.d("WeatherViewModel", String.format("Rows count: %d", result.size()));
+            int rowsAffected = mForecastDao.deleteByCity(cityId);
+            Log.d("WeatherViewModel", String.format("Rows affected: %d", rowsAffected));
+            result = mForecastDao.queryByCity(cityId);
+            Log.d("WeatherViewModel", String.format("Rows count now: %d", result.size()));
             for (Forecast weather : currentForecast) {
                 mForecastDao.insert(weather);
             }
